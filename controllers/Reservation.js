@@ -48,8 +48,28 @@ const getReservationByBusinessId = async (req, res) => {
   }
 };
 
+const getReservationByUserId = async (req, res) => {
+  try {
+    const findReservation = await reservationDb.findAll({
+      where: { userId: req.params.userId },
+      include: [
+        {
+          model: businessDb, // Nama model yang di-join
+          as: 'businessData', // Alias untuk join, harus sesuai dengan yang didefinisikan dalam model
+          order: [['createdAt', 'DESC']], // Urutan data yang diambil
+        }
+      ],
+    });
+
+    res.status(200).json(findReservation);
+  } catch (error) {
+    res.status(500).json({ msg: error.message });
+  }
+};
+
 module.exports = {
   createReservation,
   updateReservation,
   getReservationByBusinessId,
+  getReservationByUserId,
 };
